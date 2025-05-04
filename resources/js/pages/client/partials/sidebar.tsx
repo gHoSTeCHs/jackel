@@ -1,15 +1,15 @@
 const Sidebar = () => {
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" className="brand-link">
-                <img src={''} alt="iBanking Logo" className="brand-image img-circle elevation-3 opacity-80" />
+            <a href="/client" className="brand-link">
+                <img src="https://placehold.co/600x400" alt="iBanking Logo" className="brand-image img-circle elevation-3 opacity-80" />
                 <span className="brand-text font-weight-light">Bank Name</span>
             </a>
 
             <div className="sidebar">
                 <div className="user-panel d-flex mt-3 mb-3 pb-3">
                     <div className="image">
-                        <img src={''} className="elevation-2" alt="User Image" />
+                        <img src="https://placehold.co/600x400" className="elevation-2" alt="User Image" />
                     </div>
                     <div className="info">
                         <a href="#" className="d-block">
@@ -21,7 +21,7 @@ const Sidebar = () => {
                 <nav className="mt-2">
                     <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li className="nav-item has-treeview">
-                            <a href="pages_dashboard.php" className="nav-link">
+                            <a href="/client" className="nav-link">
                                 <i className="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
