@@ -1,4 +1,13 @@
 @import 'tailwindcss';
+@import '../plugins/overlayScrollbars/css/OverlayScrollbars.min.css';
+@import '../plugins/fontawesome-free/css/all.min.css';
+@import '../plugins/icheck-bootstrap/icheck-bootstrap.min.css';
+@import '../dist/css/adminlte.min.css';
+@import '../plugins/datatables-bs4/css/dataTables.bootstrap4.css';
+@import '../plugins/datatable/custom_dt_html5.css';
+
+@import url('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 
 @plugin 'tailwindcss-animate';
 
