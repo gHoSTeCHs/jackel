@@ -1,13 +1,12 @@
-@import 'tailwindcss';
+@import url('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+@import '../plugins/datatables-bs4/css/dataTables.bootstrap4.css';
+@import '../plugins/datatable/custom_dt_html5.css';
 @import '../plugins/overlayScrollbars/css/OverlayScrollbars.min.css';
 @import '../plugins/fontawesome-free/css/all.min.css';
 @import '../plugins/icheck-bootstrap/icheck-bootstrap.min.css';
 @import '../dist/css/adminlte.min.css';
-@import '../plugins/datatables-bs4/css/dataTables.bootstrap4.css';
-@import '../plugins/datatable/custom_dt_html5.css';
-
-@import url('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+@import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
 
@@ -68,14 +67,7 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
     *,
     ::after,

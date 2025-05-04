@@ -2,14 +2,14 @@ const Sidebar = () => {
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
             <a href="#" className="brand-link">
-                <img src="" alt="iBanking Logo" className="brand-image img-circle elevation-3" style="opacity: .8" />
+                <img src={''} alt="iBanking Logo" className="brand-image img-circle elevation-3 opacity-80" />
                 <span className="brand-text font-weight-light">Bank Name</span>
             </a>
 
             <div className="sidebar">
                 <div className="user-panel d-flex mt-3 mb-3 pb-3">
                     <div className="image">
-                        <img src="" className="elevation-2" alt="User Image" />
+                        <img src={''} className="elevation-2" alt="User Image" />
                     </div>
                     <div className="info">
                         <a href="#" className="d-block">
