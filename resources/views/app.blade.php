@@ -57,7 +57,6 @@
     <script src="{{ asset('dist/js/adminlte.min.js') }}" defer></script>
     <script src="{{ asset('plugins/jquery-mousewheel/jquery.mousewheel.js') }}" defer></script>
     <script src="{{ asset('plugins/raphael/raphael.min.js') }}" defer></script>
-    <script src="{{ asset('dist/js/pages/dashboard2.js') }}" defer></script>
     <script src="{{ asset('plugins/jquery-mapael/jquery.mapael.min.js') }}" defer></script>
     <script src="{{ asset('plugins/jquery-mapael/maps/usa_states.min.js') }}" defer></script>
 </body>
