@@ -22,6 +22,17 @@ Route::get('/client-account', function () {
 Route::get('/client-bank-account', function () {
     return Inertia::render('client/pages/bank-accounts');
 });
+Route::get('/transfer', function () {
+    return Inertia::render('client/pages/transfer');
+});
+Route::get('/transfer/{accountNumber}', function () {
+    return Inertia::render('client/pages/transfer-money');
+});
+
+
+Route::get('/transactions', function () {
+    return Inertia::render('client/pages/transactions');
+});
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

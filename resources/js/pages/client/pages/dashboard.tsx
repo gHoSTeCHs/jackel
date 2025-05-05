@@ -137,7 +137,13 @@ const Dashboard = () => {
                                                     <tr key={transaction.code}>
                                                         <td>{transaction.code}</td>
                                                         <td>{transaction.accountNumber}</td>
-                                                        <td>{transaction.type}</td>
+                                                        <td>
+                                                            <span
+                                                                className={`badge ${transaction.type === 'Deposit' ? 'badge-success' : transaction.type === 'Transfer' ? 'badge-warning' : transaction.type === 'Withdrawal' ? 'badge-danger' : ''}`}
+                                                            >
+                                                                {transaction.type}
+                                                            </span>
+                                                        </td>
                                                         <td>{transaction.amount}</td>
                                                         <td>{transaction.owner}</td>
                                                         <td>{transaction.timestamp}</td>

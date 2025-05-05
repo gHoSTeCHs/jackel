@@ -40,6 +40,11 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
+
+    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
@@ -49,12 +54,8 @@
 <body class="font-sans antialiased">
     @inertia
 
-    {{-- Load traditional JS libraries globally --}}
-    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
-    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-    <script src="{{ asset('dist/js/adminlte.min.js') }}" defer></script>
+    <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}" defer></script>
     <script src="{{ asset('plugins/jquery-mousewheel/jquery.mousewheel.js') }}" defer></script>
     <script src="{{ asset('plugins/raphael/raphael.min.js') }}" defer></script>
     <script src="{{ asset('plugins/jquery-mapael/jquery.mapael.min.js') }}" defer></script>

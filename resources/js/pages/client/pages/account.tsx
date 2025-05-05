@@ -30,7 +30,9 @@ const Account = () => {
                         <div className="col-md-3">
                             <div className="card card-purple card-outline">
                                 <div className="card-body box-profile">
-                                    <div className="text-center">Client Picture</div>
+                                    <div className="text-center">
+                                        <img className="img-fluid" src="https://placehold.co/600x400" alt="User profile picture" />
+                                    </div>
 
                                     <h3 className="profile-username text-center">Name</h3>
 
