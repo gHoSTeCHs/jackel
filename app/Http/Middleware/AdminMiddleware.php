@@ -16,10 +16,12 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
+        if (Auth::user()) {
+            if (Auth::user()->isAdmin()) {
+                return $next($request);
+            }
 
-        if($user != null && $user->isAdmin()){
-            return $next($request);
+            return redirect('client.dashboard');
         }
 
         return redirect('/')->with('error', 'You are not authorized to access this page.');

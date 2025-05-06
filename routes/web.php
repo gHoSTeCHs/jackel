@@ -7,7 +7,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
@@ -15,7 +15,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/client', function () {
     return Inertia::render('client/pages/dashboard');
-});
+})->name('client.dashboard');
 Route::get('/client-account', function () {
     return Inertia::render('client/pages/account');
 });
@@ -31,13 +31,13 @@ Route::get('/transfer-money', function () {
     return Inertia::render('client/pages/transfer-money');
 });
 Route::get('/transfer-money/same-bank', function () {
-    return Inertia::render('client/pages/transfer-money');
+    return Inertia::render('client/pages/transfer/same-bank-transfer');
 });
 Route::get('/transfer-money/local-bank', function () {
-    return Inertia::render('client/pages/transfer-money');
+    return Inertia::render('client/pages/transfer/local-bank-transfer');
 });
 Route::get('/transfer-money/international', function () {
-    return Inertia::render('client/pages/transfer-money');
+    return Inertia::render('client/pages/transfer/international-transfer');
 });
 
 // Transactions

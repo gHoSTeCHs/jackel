@@ -71,7 +71,7 @@ export const InternationalTransfer = () => {
         <MainLayout>
             <div className="mx-auto max-w-3xl p-4">
                 <div className="mb-4">
-                    <Link href="/transfer" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+                    <Link href={'/transfer-money'} className="inline-flex items-center text-blue-600 hover:text-blue-800">
                         <ArrowLeft className="mr-1 h-4 w-4" />
                         <span>Back to Transfer Options</span>
                     </Link>
@@ -301,7 +301,7 @@ export const InternationalTransfer = () => {
 
                                 <div className="flex justify-center space-x-4">
                                     <Link
-                                        href="/transfer"
+                                        href={'/transfer-money'}
                                         className="rounded-md bg-purple-500 px-6 py-2 text-white hover:bg-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:outline-none"
                                     >
                                         Make Another Transfer

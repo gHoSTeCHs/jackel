@@ -5,13 +5,20 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property mixed $role
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_USER = 'user';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +30,10 @@ class User extends Authenticatable
         'email',
         'role',
         'password',
+        'phone',
+        'address',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -34,7 +44,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    private mixed $role;
+
 
     /**
      * Get the attributes that should be cast.
@@ -45,16 +55,25 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'role' => 'string',
             'password' => 'hashed',
         ];
+
     }
 
-    const ROLE_ADMIN = 'admin';
-
-//    const ROLE_USER = 'user';
+    public function client(): HasOne
+    {
+        return $this->hasOne(Client::class);
+    }
 
     public function isAdmin(): bool
     {
-        return $this->role == self::ROLE_ADMIN;
+        return $this->role === self::ROLE_ADMIN;
     }
+
+    public function isUser(): bool
+    {
+        return $this->role === self::ROLE_USER;
+    }
+
 }

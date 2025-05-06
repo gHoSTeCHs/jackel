@@ -56,10 +56,10 @@ const Transfer = () => {
                                                 <td>AccountType</td>
                                                 <td>Client Name</td>
                                                 <td>
-                                                    <a className="btn btn-success btn-sm" href={'/transfer-money'}>
+                                                    <Link className="btn btn-success btn-sm" href={'/transfer-money'}>
                                                         <i className="fas fa-money-bill-alt"></i>
                                                         Transfer Money
-                                                    </a>
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         </tbody>
