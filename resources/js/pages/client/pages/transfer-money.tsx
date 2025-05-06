@@ -41,6 +41,7 @@ const TransferMoney = () => {
 
     return (
         <MainLayout>
+            {/* Header Section with Breadcrumbs */}
             <section className="border-b border-gray-200 bg-gray-50">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
@@ -79,6 +80,7 @@ const TransferMoney = () => {
                 </div>
             </section>
 
+            {/* Main Content Section */}
             <section className="py-6">
                 <div className="container mx-auto px-4">
                     <div className="overflow-hidden rounded-lg bg-white shadow">
