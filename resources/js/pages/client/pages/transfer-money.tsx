@@ -1,6 +1,6 @@
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Building, ChevronRight, CreditCard, Globe, Home, Repeat } from 'lucide-react';
+import { ArrowRight, Building, Globe2, Landmark } from 'lucide-react';
 import { useState } from 'react';
 
 const TransferMoney = () => {
@@ -10,77 +10,37 @@ const TransferMoney = () => {
         {
             id: 'same-bank',
             title: 'Same Bank Transfer',
-            description: 'Account to Account Transfer',
-            icon: <Building className="h-8 w-8" />,
-            deliveryTime: 'maximum 24hrs delivery',
-            color: 'from-emerald-500 to-emerald-700',
-            hoverColor: 'from-emerald-600 to-emerald-800',
-            link: '/transfer/same-bank',
+            description: 'Transfer money between accounts within our bank',
+            icon: <Building className="h-8 w-8 text-white" />,
+            link: '/transfer-money/same-bank',
+            color: 'from-emerald-500 to-emerald-600',
+            hoverColor: 'from-emerald-600 to-emerald-700',
+            deliveryTime: 'Instant Transfer',
         },
         {
             id: 'local-bank',
             title: 'Local Bank Transfer',
-            description: 'Interbank Transfer within the country',
-            icon: <Repeat className="h-8 w-8" />,
-            deliveryTime: 'maximum 48hrs delivery',
-            color: 'from-blue-500 to-blue-700',
-            hoverColor: 'from-blue-600 to-blue-800',
-            link: '/transfer/local-bank',
+            description: 'Send money to other local bank accounts',
+            icon: <Landmark className="h-8 w-8 text-white" />,
+            link: '/transfer-money/local-bank',
+            color: 'from-blue-500 to-blue-600',
+            hoverColor: 'from-blue-600 to-blue-700',
+            deliveryTime: '1-2 Business Days',
         },
         {
             id: 'international',
-            title: 'Wire/INTL Transfer',
-            description: 'From one country to another',
-            icon: <Globe className="h-8 w-8" />,
-            deliveryTime: 'Maximum 5 Working Days',
-            color: 'from-gray-700 to-gray-900',
-            hoverColor: 'from-gray-800 to-black',
-            link: '/transfer/international',
+            title: 'International Wire',
+            description: 'Send money internationally to any bank worldwide',
+            icon: <Globe2 className="h-8 w-8 text-white" />,
+            link: '/transfer-money/international',
+            color: 'from-purple-500 to-purple-600',
+            hoverColor: 'from-purple-600 to-purple-700',
+            deliveryTime: '2-4 Business Days',
         },
     ];
 
     return (
         <MainLayout>
-            {/* Header Section with Breadcrumbs */}
-            <section className="border-b border-gray-200 bg-gray-50">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
-                        <div className="mb-3 md:mb-0">
-                            <h1 className="text-2xl font-bold text-gray-800">Transfer Money</h1>
-                            <p className="mt-1 text-sm text-gray-500">Send funds to accounts locally or internationally</p>
-                        </div>
-                        <nav className="flex" aria-label="Breadcrumb">
-                            <ol className="inline-flex items-center space-x-1 md:space-x-2">
-                                <li className="inline-flex items-center">
-                                    <Link href="#" className="inline-flex items-center text-gray-500 hover:text-blue-600">
-                                        <Home className="mr-1 h-4 w-4" />
-                                        <span className="text-sm">Dashboard</span>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <div className="flex items-center">
-                                        <ChevronRight className="h-4 w-4 text-gray-400" />
-                                        <Link href="#" className="ml-1 text-sm text-gray-500 hover:text-blue-600">
-                                            <span className="flex items-center">
-                                                <CreditCard className="mr-1 h-4 w-4" />
-                                                Finances
-                                            </span>
-                                        </Link>
-                                    </div>
-                                </li>
-                                <li aria-current="page">
-                                    <div className="flex items-center">
-                                        <ChevronRight className="h-4 w-4 text-gray-400" />
-                                        <span className="ml-1 text-sm font-medium text-gray-700">Transfer Money</span>
-                                    </div>
-                                </li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-            </section>
-
-            {/* Main Content Section */}
             <section className="py-6">
                 <div className="container mx-auto px-4">
                     <div className="overflow-hidden rounded-lg bg-white shadow">
@@ -100,7 +60,7 @@ const TransferMoney = () => {
                                         onMouseLeave={() => setHoveredCard(null)}
                                     >
                                         <div
-                                            className={`relative h-full overflow-hidden rounded-lg shadow transition-all duration-300 ${hoveredCard === option.id ? '-translate-y-1 transform shadow-lg' : ''} `}
+                                            className={`relative h-full overflow-hidden rounded-lg shadow transition-all duration-300 ${hoveredCard === option.id ? '-translate-y-1 transform shadow-lg' : ''}`}
                                         >
                                             <div
                                                 className={`absolute inset-0 bg-gradient-to-br ${hoveredCard === option.id ? option.hoverColor : option.color} transition-all duration-300`}

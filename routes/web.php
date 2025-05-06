@@ -22,14 +22,25 @@ Route::get('/client-account', function () {
 Route::get('/client-bank-account', function () {
     return Inertia::render('client/pages/bank-accounts');
 });
+
+// Transfers
 Route::get('/transfer', function () {
     return Inertia::render('client/pages/transfer');
 });
-Route::get('/transfer/{accountNumber}', function () {
+Route::get('/transfer-money', function () {
+    return Inertia::render('client/pages/transfer-money');
+});
+Route::get('/transfer-money/same-bank', function () {
+    return Inertia::render('client/pages/transfer-money');
+});
+Route::get('/transfer-money/local-bank', function () {
+    return Inertia::render('client/pages/transfer-money');
+});
+Route::get('/transfer-money/international', function () {
     return Inertia::render('client/pages/transfer-money');
 });
 
-
+// Transactions
 Route::get('/transactions', function () {
     return Inertia::render('client/pages/transactions');
 });
