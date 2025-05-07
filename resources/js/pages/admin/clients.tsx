@@ -74,7 +74,7 @@ export default function Clients({ clients }: ClientsPageProps) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {clients.map((client) => (
+                                {clients?.map((client) => (
                                     <TableRow key={client.id}>
                                         <TableCell>{client.client_id}</TableCell>
                                         <TableCell>{client.account_number}</TableCell>

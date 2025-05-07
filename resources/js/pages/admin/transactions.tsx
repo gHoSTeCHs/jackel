@@ -90,7 +90,7 @@ export default function Transactions({ transactions }: TransactionsPageProps) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {transactions.map((transaction) => (
+                                {transactions?.map((transaction) => (
                                     <TableRow key={transaction.id}>
                                         <TableCell className="font-medium">{transaction.transaction_code}</TableCell>
                                         <TableCell>{transaction.client.user.name}</TableCell>
