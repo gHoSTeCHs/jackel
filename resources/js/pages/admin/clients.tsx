@@ -1,3 +1,4 @@
+import { CreateClientDialog } from '@/components/create-client-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 interface Client {
     id: number;
@@ -26,6 +27,10 @@ interface Client {
 
 interface ClientsPageProps {
     clients: Client[];
+    accountTypes: {
+        id: string;
+        name: string;
+    }[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -36,16 +41,20 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Clients({ clients }: ClientsPageProps) {
+    const accountTypes = [
+        { id: '1', name: 'Checking Account' },
+        { id: '2', name: 'Business Account' },
+        { id: '3', name: 'Fixed Deposit Account' },
+        { id: '4', name: 'Student Account' },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients Management" />
             <div className="space-y-4 p-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-3xl font-bold tracking-tight">Clients</h2>
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add New Client
-                    </Button>
+                    <CreateClientDialog accountTypes={accountTypes} />
                 </div>
 
                 <div className="flex items-center space-x-2">

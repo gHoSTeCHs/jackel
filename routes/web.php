@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,9 +13,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('admin/clients', function () {
-        return Inertia::render('admin/clients');
-    })->name('dashboard');
+    Route::get('admin/clients', [ClientController::class, 'index']
+    )->name('admin.clients.index');
 
     Route::get('admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
 });

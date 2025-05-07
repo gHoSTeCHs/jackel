@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Random\RandomException;
 
 class Client extends Model
 {
@@ -30,6 +31,9 @@ class Client extends Model
         return "iBank-CLIENT-{$randomNumber}";
     }
 
+    /**
+     * @throws RandomException
+     */
     public static function generateAccountNumber(): string
     {
         return str_pad((string) random_int(1000000000, 9999999999), 10, '0', STR_PAD_LEFT);

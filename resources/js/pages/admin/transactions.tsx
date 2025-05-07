@@ -1,3 +1,4 @@
+import { CreateTransactionDialog } from '@/components/create-transaction-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,13 +7,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Filter, Plus, Search } from 'lucide-react';
+import { Filter, Search } from 'lucide-react';
 
 interface Transaction {
     id: number;
     transaction_code: string;
-    type: 'deposit' | 'withdrawal' | 'transfer';
+    type: 'deposit' | 'withdrawal' | 'same-bank-transfer' | 'local-bank-transfer' | 'international-transfer';
     amount: number;
+    currency?: string;
+    recipient_account?: string;
+    recipient_name?: string;
+    bank_name?: string;
+    bank_address?: string;
+    swift_code?: string;
+    beneficiary_address?: string;
+    reference?: string;
+    description?: string;
     client: {
         client_id: string;
         account_number: string;
@@ -20,12 +30,20 @@ interface Transaction {
             name: string;
         };
     };
-    status: boolean;
+    status: 'pending' | 'completed' | 'failed' | 'cancelled';
     created_at: string;
 }
 
 interface TransactionsPageProps {
     transactions: Transaction[];
+    clients: {
+        id: string;
+        client_id: string;
+        user: {
+            name: string;
+        };
+        account_number: string;
+    }[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -41,24 +59,42 @@ const getTransactionBadgeVariant = (type: Transaction['type']): 'destructive' | 
             return 'default';
         case 'withdrawal':
             return 'destructive';
-        case 'transfer':
+        case 'same-bank-transfer':
+            return 'secondary';
+        case 'local-bank-transfer':
+            return 'secondary';
+        case 'international-transfer':
             return 'secondary';
         default:
             return 'outline';
     }
 };
 
-export default function Transactions({ transactions }: TransactionsPageProps) {
+const getTransactionTypeLabel = (type: Transaction['type']): string => {
+    switch (type) {
+        case 'deposit':
+            return 'Deposit';
+        case 'withdrawal':
+            return 'Withdrawal';
+        case 'same-bank-transfer':
+            return 'Same Bank Transfer';
+        case 'local-bank-transfer':
+            return 'Local Bank Transfer';
+        case 'international-transfer':
+            return 'International Transfer';
+        default:
+            return type;
+    }
+};
+
+export default function Transactions({ transactions, clients }: TransactionsPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions Management" />
             <div className="space-y-4 p-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-3xl font-bold tracking-tight">Transactions</h2>
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        New Transaction
-                    </Button>
+                    <CreateTransactionDialog clients={clients} />
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -84,6 +120,7 @@ export default function Transactions({ transactions }: TransactionsPageProps) {
                                     <TableHead>Account</TableHead>
                                     <TableHead>Type</TableHead>
                                     <TableHead>Amount</TableHead>
+                                    <TableHead>Recipent</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Date</TableHead>
                                     <TableHead>Actions</TableHead>
@@ -97,13 +134,40 @@ export default function Transactions({ transactions }: TransactionsPageProps) {
                                         <TableCell>{transaction.client.account_number}</TableCell>
                                         <TableCell>
                                             <Badge variant={getTransactionBadgeVariant(transaction.type)}>
-                                                {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                                                {getTransactionTypeLabel(transaction.type)}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell>${transaction.amount.toLocaleString()}</TableCell>
                                         <TableCell>
-                                            <Badge variant={transaction.status ? 'outline' : 'secondary'}>
-                                                {transaction.status ? 'Completed' : 'Pending'}
+                                            {transaction.currency ? `${transaction.currency} ` : '$'}
+                                            {transaction.amount.toLocaleString()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {transaction.type === 'same-bank-transfer' ||
+                                            transaction.type === 'local-bank-transfer' ||
+                                            transaction.type === 'international-transfer' ? (
+                                                <div className="space-y-1 text-sm">
+                                                    <p className="font-medium">{transaction.recipient_name}</p>
+                                                    <p className="text-gray-500">{transaction.recipient_account}</p>
+                                                    {transaction.bank_name && <p className="text-gray-500">{transaction.bank_name}</p>}
+                                                    {transaction.swift_code && <p className="text-gray-500">SWIFT: {transaction.swift_code}</p>}
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-500">-</span>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    transaction.status === 'completed'
+                                                        ? 'default'
+                                                        : transaction.status === 'failed'
+                                                          ? 'destructive'
+                                                          : transaction.status === 'cancelled'
+                                                            ? 'outline'
+                                                            : 'secondary'
+                                                }
+                                            >
+                                                {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>{new Date(transaction.created_at).toLocaleDateString()}</TableCell>

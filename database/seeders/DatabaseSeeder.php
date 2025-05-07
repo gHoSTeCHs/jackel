@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\AccountType;
+use App\Models\Client;
+use App\Models\Transaction;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +16,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Create admin user
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+            'password' => Hash::make('password')
         ]);
+
+        // Create account types
+        $accountTypes = AccountType::factory(5)->create();
+
+        // Create regular users with client accounts
+        User::factory(10)
+            ->create(['role' => 'user'])
+            ->each(function ($user) use ($accountTypes) {
+                Client::factory()
+                    ->create([
+                        'user_id' => $user->id,
+                        'account_type_id' => $accountTypes->random()->id
+                    ]);
+            });
+
+        // Create some transactions for each client
+        Client::all()->each(function ($client) {
+            Transaction::factory(5)->create(['client_id' => $client->id]);
+        });
     }
 }
