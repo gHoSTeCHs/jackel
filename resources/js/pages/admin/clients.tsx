@@ -97,7 +97,11 @@ export default function Clients({ clients }: ClientsPageProps) {
                                             <Switch checked={client.status} onCheckedChange={() => {}} aria-label="Toggle account status" />
                                         </TableCell>
                                         <TableCell>
-                                            <Button variant="outline" size="sm">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => (window.location.href = `/admin/clients/${client.id}`)}
+                                            >
                                                 View Details
                                             </Button>
                                         </TableCell>

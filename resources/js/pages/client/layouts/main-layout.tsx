@@ -1,115 +1,115 @@
-import Nav from '@/pages/client/partials/nav';
-import Sidebar from '@/pages/client/partials/sidebar';
-import React, { useEffect } from 'react';
+import { MainLayoutProps } from '@/types/layout';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-declare global {
-    interface Window {
-        $: any;
-    }
-}
+const MainLayout = ({ children }: MainLayoutProps) => {
+    const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
-    useEffect(() => {
-        document.body.classList.add('hold-transition', 'sidebar-mini', 'layout-fixed', 'layout-navbar-fixed');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
+    const [isHovered, setIsHovered] = useState(false);
+    const sidebarRef = useRef<HTMLElement>(null);
+    const mainContentRef = useRef<HTMLDivElement>(null);
+    const [isMobileView, setIsMobileView] = useState(isMobile);
 
-        console.log('Attempting to initialize AdminLTE widgets in MainLayout useEffect...');
-        try {
-            const pushMenuElement = window.$('[data-widget="pushmenu"]');
-            if (pushMenuElement.length > 0 && window.$ && window.$.fn && window.$.fn.PushMenu) {
-                pushMenuElement.PushMenu();
-                console.log('AdminLTE PushMenu initialized successfully.');
-            } else if (pushMenuElement.length === 0) {
-                console.warn("AdminLTE PushMenu element '[data-widget=pushmenu]' not found.");
-            } else {
-                console.warn('AdminLTE PushMenu jQuery plugin not found.');
-            }
+    const handleMouseEnter = useCallback(() => {
+        if (!isSidebarOpen) setIsHovered(true);
+    }, [isSidebarOpen]);
 
-            const cardWidgetElement = window.$('[data-card-widget]');
-            if (cardWidgetElement.length > 0 && window.$ && window.$.fn && window.$.fn.CardWidget) {
-                cardWidgetElement.CardWidget();
-                console.log('AdminLTE CardWidget initialized successfully.');
-            } else if (cardWidgetElement.length === 0) {
-                console.warn("AdminLTE CardWidget element '[data-card-widget]' not found.");
-            } else {
-                console.warn('AdminLTE CardWidget jQuery plugin not found.');
-            }
-
-            const overlay = document.getElementById('sidebar-overlay');
-            if (overlay) {
-                overlay.onclick = () => {
-                    document.body.classList.remove('sidebar-open');
-
-                    const pushMenuElement = window.$('[data-widget="pushmenu"]');
-                    if (pushMenuElement.length > 0 && window.$ && window.$.fn && window.$.fn.PushMenu) {
-                        pushMenuElement.PushMenu('collapse');
-                    }
-                    overlay.classList.remove('active');
-                };
-            }
-        } catch (error) {
-            console.error('Error initializing AdminLTE widgets:', error);
-        }
-
-        return () => {
-            console.log('Cleaning up MainLayout: Removing body classes and disposing widgets...');
-            document.body.classList.remove('hold-transition', 'sidebar-mini', 'layout-fixed', 'layout-navbar-fixed');
-            try {
-                const pushMenuElement = window.$('[data-widget="pushmenu"]');
-                if (pushMenuElement.length > 0 && window.$ && window.$.fn && window.$.fn.PushMenu && typeof pushMenuElement.PushMenu === 'function') {
-                    pushMenuElement.PushMenu('dispose');
-                    console.log('AdminLTE PushMenu disposed.');
-                } else {
-                    console.warn('AdminLTE PushMenu element or plugin not available for disposal.');
-                }
-
-                const cardWidgetElement = window.$('[data-card-widget]');
-                if (
-                    cardWidgetElement.length > 0 &&
-                    window.$ &&
-                    window.$.fn &&
-                    window.$.fn.CardWidget &&
-                    typeof cardWidgetElement.CardWidget === 'function'
-                ) {
-                    if (typeof cardWidgetElement.CardWidget('dispose') === 'function') {
-                        cardWidgetElement.CardWidget('dispose');
-                        console.log('AdminLTE CardWidget disposed.');
-                    } else if (typeof cardWidgetElement.CardWidget('destroy') === 'function') {
-                        cardWidgetElement.CardWidget('destroy');
-                        console.log('AdminLTE CardWidget destroyed.');
-                    } else {
-                        console.warn("AdminLTE CardWidget does not support 'dispose' or 'destroy'.");
-                    }
-                } else {
-                    console.warn('AdminLTE CardWidget element or plugin not available for destruction/disposal.');
-                }
-            } catch (error) {
-                console.error('Error disposing/destroying AdminLTE widgets:', error);
-            }
-            console.log('MainLayout cleanup finished.');
-        };
+    const handleMouseLeave = useCallback(() => {
+        setIsHovered(false);
     }, []);
 
+    useEffect(() => {
+        const sidebar = sidebarRef.current;
+        if (!sidebar) return;
+
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 768);
+        };
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isMobileView && isSidebarOpen && mainContentRef.current?.contains(event.target as Node)) {
+                setIsSidebarOpen(false);
+            }
+        };
+
+        sidebar.addEventListener('mouseenter', handleMouseEnter);
+        sidebar.addEventListener('mouseleave', handleMouseLeave);
+        window.addEventListener('resize', handleResize);
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            sidebar.removeEventListener('mouseenter', handleMouseEnter);
+            sidebar.removeEventListener('mouseleave', handleMouseLeave);
+            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [handleMouseEnter, handleMouseLeave, isMobileView, isSidebarOpen]);
+
     return (
-        <div className="wrapper">
-            <Nav />
-            <Sidebar />
+        <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+            {/* Sidebar */}
+            <aside
+                ref={sidebarRef}
+                className={`${
+                    isMobileView ? 'fixed' : 'relative'
+                } inset-y-0 left-0 z-50 bg-gray-800 text-white transition-all duration-300 ease-in-out ${
+                    isMobileView ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full') : isSidebarOpen || isHovered ? 'w-64' : 'w-16'
+                }`}
+            >
+                <div className="flex items-center border-b border-gray-700 p-5">
+                    <div className="flex items-center space-x-3">
+                        <div className="h-8 w-8 rounded-full bg-gray-600" />
+                        <span
+                            className={`text-lg font-semibold transition-opacity duration-300 ${
+                                isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'
+                            }`}
+                        >
+                            Bank Name
+                        </span>
+                    </div>
+                </div>
 
-            <div className="content-wrapper">{children}</div>
+                {/* Navigation Menu */}
+                <nav className="space-y-2 p-4">
+                    <a href="#" className="flex items-center space-x-3 rounded-lg bg-gray-700 p-3">
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
+                        </svg>
+                        <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
+                            Dashboard
+                        </span>
+                    </a>
+                </nav>
+            </aside>
 
-            <div
-                id="sidebar-overlay"
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    background: 'rgba(0,0,0,0.3)',
-                    zIndex: 1040,
-                    display: 'none',
-                    transition: 'opacity 0.3s',
-                }}
-            ></div>
+            <div ref={mainContentRef} className={`flex flex-1 flex-col overflow-hidden ${isMobileView && isSidebarOpen ? 'opacity-50' : ''}`}>
+                {/* Header */}
+                <header className="border-b border-gray-700 bg-white shadow dark:bg-gray-800">
+                    <div className="flex items-center justify-between p-4">
+                        <button
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            title="button"
+                        >
+                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <div className="flex items-center space-x-4">
+                            <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600" />
+                            <span className="text-gray-800 dark:text-white">User Name</span>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Main Content Area */}
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 dark:bg-gray-900">{children}</main>
+            </div>
         </div>
     );
 };

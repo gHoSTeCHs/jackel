@@ -13,8 +13,13 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('admin/clients', [ClientController::class, 'index']
-    )->name('admin.clients.index');
+    Route::prefix('admin/clients')->group(function () {
+        Route::get('/', [ClientController::class, 'index'])->name('admin.clients.index');
+        Route::get('/{client}', [ClientController::class, 'show'])->name('admin.clients.show');
+        Route::put('/{client}', [ClientController::class, 'update'])->name('admin.clients.update');
+        Route::post('/{client}/transactions', [ClientController::class, 'createTransaction'])->name('admin.clients.transactions.store');
+        Route::post('/{client}/balance', [ClientController::class, 'updateBalance'])->name('admin.clients.balance.update');
+    });
 
     Route::get('admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
 });
