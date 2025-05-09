@@ -228,7 +228,7 @@ const Dashboard = ({ transactions, stats, balance }: DashboardProps) => {
 
                                 <div className="border-t border-gray-200 px-6 py-4">
                                     <Link
-                                        href="#"
+                                        href={route('client.transactions')}
                                         className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
                                     >
                                         View All

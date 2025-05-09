@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Client\ClientController as UserClientController;
 use App\Http\Controllers\Client\TransactionController as UserTransactionController;
+use App\Http\Controllers\Client\TransferController as UserTransferController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -51,9 +52,7 @@ Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
 
     // Transfers
     Route::prefix('transfer')->group(function () {
-        Route::get('/', function () {
-            return Inertia::render('client/pages/transfer');
-        })->name('client.transfer');
+        Route::get('/', [UserTransferController::class, 'index'])->name('client.transfer');
 
         Route::get('/money', function () {
             return Inertia::render('client/pages/transfer-money');
@@ -62,14 +61,17 @@ Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
         Route::get('/same-bank', function () {
             return Inertia::render('client/pages/transfer/same-bank-transfer');
         })->name('client.transfer.same-bank');
+        Route::post('/same-bank', [UserTransferController::class, 'sameBankTransfer'])->name('client.transfer.same-bank.process');
 
         Route::get('/local-bank', function () {
             return Inertia::render('client/pages/transfer/local-bank-transfer');
         })->name('client.transfer.local-bank');
+        Route::post('/local-bank', [UserTransferController::class, 'localBankTransfer'])->name('client.transfer.local-bank.process');
 
         Route::get('/international', function () {
             return Inertia::render('client/pages/transfer/international-transfer');
         })->name('client.transfer.international');
+        Route::post('/international', [UserTransferController::class, 'internationalTransfer'])->name('client.transfer.international.process');
     });
 
     // Transactions

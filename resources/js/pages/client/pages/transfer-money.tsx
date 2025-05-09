@@ -12,7 +12,7 @@ const TransferMoney = () => {
             title: 'Same Bank Transfer',
             description: 'Transfer money between accounts within our bank',
             icon: <Building className="h-8 w-8 text-white" />,
-            link: '/transfer-money/same-bank',
+            link: 'client.transfer.same-bank',
             color: 'from-emerald-500 to-emerald-600',
             hoverColor: 'from-emerald-600 to-emerald-700',
             deliveryTime: 'Instant Transfer',
@@ -22,7 +22,7 @@ const TransferMoney = () => {
             title: 'Local Bank Transfer',
             description: 'Send money to other local bank accounts',
             icon: <Landmark className="h-8 w-8 text-white" />,
-            link: '/transfer-money/local-bank',
+            link: 'client.transfer.local-bank',
             color: 'from-blue-500 to-blue-600',
             hoverColor: 'from-blue-600 to-blue-700',
             deliveryTime: '1-2 Business Days',
@@ -32,7 +32,7 @@ const TransferMoney = () => {
             title: 'International Wire',
             description: 'Send money internationally to any bank worldwide',
             icon: <Globe2 className="h-8 w-8 text-white" />,
-            link: '/transfer-money/international',
+            link: 'client.transfer.international',
             color: 'from-purple-500 to-purple-600',
             hoverColor: 'from-purple-600 to-purple-700',
             deliveryTime: '2-4 Business Days',
@@ -54,7 +54,7 @@ const TransferMoney = () => {
                                 {transferOptions.map((option) => (
                                     <Link
                                         key={option.id}
-                                        href={option.link}
+                                        href={route(option.link)}
                                         className="group block"
                                         onMouseEnter={() => setHoveredCard(option.id)}
                                         onMouseLeave={() => setHoveredCard(null)}

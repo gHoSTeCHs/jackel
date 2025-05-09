@@ -1,10 +1,9 @@
-import { Button } from '@/components/ui/button';
-import MainLayout from '@/pages/client/layouts/main-layout';
-import { Link } from '@inertiajs/react';
-
 import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
+import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
+import MainLayout from '@/pages/client/layouts/main-layout';
 import { Transaction } from '@/types';
+import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface TransactionsProps {

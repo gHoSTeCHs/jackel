@@ -35,7 +35,7 @@ export const FormInput = ({ label, type = 'text', placeholder, value, onChange, 
                     type={type}
                     value={value}
                     onChange={onChange}
-                    className={`block w-full rounded-md shadow-sm pl-${icon ? '10' : '3'} border py-2 pr-3 ${error ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                    className={`block w-full rounded-md shadow-sm pl-${icon ? '10' : '3'} border py-2 pr-3 ${error ? 'border-red-500' : 'border-gray-300'} text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
                     placeholder={placeholder}
                     required={required}
                 />
@@ -62,7 +62,7 @@ export const FormSelect = ({ label, options, value, onChange, icon, required = f
                     name="name"
                     title="name"
                     onChange={onChange}
-                    className={`block w-full rounded-md shadow-sm pl-${icon ? '10' : '3'} border py-2 pr-3 ${error ? 'border-red-500' : 'border-gray-300'} appearance-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                    className={`block w-full rounded-md shadow-sm pl-${icon ? '10' : '3'} border py-2 pr-3 ${error ? 'border-red-500' : 'border-gray-300'} appearance-none text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none`}
                     required={required}
                 >
                     {options.map((option) => (
