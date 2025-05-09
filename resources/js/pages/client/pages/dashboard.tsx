@@ -1,33 +1,51 @@
+import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
 import MainLayout from '@/pages/client/layouts/main-layout';
+import { Transaction } from '@/types';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
-const Dashboard = () => {
-    const mockTransactions = [
-        {
-            code: 'TXN12345',
-            accountNumber: 'ACC98765',
-            type: 'Deposit',
-            amount: '$500.00',
-            owner: 'John Doe',
-            timestamp: '2023-10-27 10:00 AM',
-        },
-        {
-            code: 'TXN67890',
-            accountNumber: 'ACC54321',
-            type: 'Withdrawal',
-            amount: '$200.00',
-            owner: 'Jane Smith',
-            timestamp: '2023-10-27 11:30 AM',
-        },
-        {
-            code: 'TXN11223',
-            accountNumber: 'ACC12345',
-            type: 'Transfer',
-            amount: '$150.00',
-            owner: 'Alice Brown',
-            timestamp: '2023-10-26 02:15 PM',
-        },
-    ];
+type DashboardProps = {
+    transactions: Transaction[];
+    stats: {
+        deposits: number;
+        withdrawals: number;
+        transfers: number;
+    };
+    balance: number;
+};
+
+const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(amount);
+};
+
+const Dashboard = ({ transactions, stats, balance }: DashboardProps) => {
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+    const EmptyState = () => {
+        return (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="mb-4 rounded-full bg-gray-100 p-6">
+                    <i className="fas fa-receipt text-4xl text-gray-400"></i>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900">No Transactions Yet</h3>
+                <p className="mt-1 text-sm text-gray-500">Start making transactions to see your financial activity here.</p>
+                <div className="mt-6">
+                    <Link
+                        href={route('client.transfer')}
+                        className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                    >
+                        <i className="fas fa-plus mr-2"></i>
+                        Make a Transaction
+                    </Link>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <MainLayout>
             <div className="p-4">
@@ -58,7 +76,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="ml-4">
                                     <p className="text-sm text-gray-500">Deposits</p>
-                                    <p className="text-lg font-semibold">Deposits</p>
+                                    <p className="text-lg font-semibold text-gray-800">{formatCurrency(stats.deposits)}</p>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +88,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="ml-4">
                                     <p className="text-sm text-gray-500">Withdrawals</p>
-                                    <p className="text-lg font-semibold">$ Withdrawals</p>
+                                    <p className="text-lg font-semibold text-gray-800">{formatCurrency(stats.withdrawals)}</p>
                                 </div>
                             </div>
                         </div>
@@ -82,7 +100,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="ml-4">
                                     <p className="text-sm text-gray-500">Transfers</p>
-                                    <p className="text-lg font-semibold">$ Transfers</p>
+                                    <p className="text-lg font-semibold text-gray-800">{formatCurrency(stats.transfers)}</p>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +112,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="ml-4">
                                     <p className="text-sm text-gray-500">Wallet Balance</p>
-                                    <p className="text-lg font-semibold">$ Account balance</p>
+                                    <p className="text-lg font-semibold text-gray-800">{formatCurrency(balance)}</p>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +151,7 @@ const Dashboard = () => {
                                                     Amount
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                    Acc. Owner
+                                                    Status
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                                     Timestamp
@@ -141,22 +159,68 @@ const Dashboard = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
-                                            {mockTransactions.map((transaction) => (
-                                                <tr key={transaction.code} className="hover:bg-gray-50">
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.code}</td>
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.accountNumber}</td>
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap">
-                                                        <span
-                                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${transaction.type === 'Deposit' ? 'bg-green-100 text-green-800' : transaction.type === 'Transfer' ? 'bg-yellow-100 text-yellow-800' : transaction.type === 'Withdrawal' ? 'bg-red-100 text-red-800' : ''}`}
-                                                        >
-                                                            {transaction.type}
-                                                        </span>
+                                            {transactions.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan={6} className="px-6 py-4 text-center">
+                                                        <EmptyState />
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.amount}</td>
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.owner}</td>
-                                                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.timestamp}</td>
                                                 </tr>
-                                            ))}
+                                            ) : (
+                                                transactions.map((transaction) => (
+                                                    <tr
+                                                        key={transaction.transaction_code}
+                                                        className="cursor-pointer hover:bg-gray-50"
+                                                        onClick={() => {
+                                                            setSelectedTransaction(transaction);
+                                                            setIsDetailsOpen(true);
+                                                        }}
+                                                    >
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                            {transaction.transaction_code}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                            {transaction.recipient_name || 'N/A'}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap">
+                                                            <span
+                                                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                                                                    transaction.type === 'deposit'
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : transaction.type.includes('transfer')
+                                                                          ? 'bg-yellow-100 text-yellow-800'
+                                                                          : transaction.type === 'withdrawal'
+                                                                            ? 'bg-red-100 text-red-800'
+                                                                            : ''
+                                                                }`}
+                                                            >
+                                                                {transaction.type
+                                                                    .split('-')
+                                                                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                                                                    .join(' ')}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                            {formatCurrency(transaction.amount)}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                            <span
+                                                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                                                                    transaction.status === 'completed'
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : transaction.status === 'pending'
+                                                                          ? 'bg-yellow-100 text-yellow-800'
+                                                                          : 'bg-red-100 text-red-800'
+                                                                }`}
+                                                            >
+                                                                {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                            {new Date(transaction.created_at).toLocaleString()}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -174,6 +238,9 @@ const Dashboard = () => {
                     </div>
                 </div>
             </section>
+            {selectedTransaction && (
+                <TransactionDetailsDialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} transaction={selectedTransaction} />
+            )}
         </MainLayout>
     );
 };

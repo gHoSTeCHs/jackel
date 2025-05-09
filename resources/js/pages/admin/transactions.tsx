@@ -5,34 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { Transaction, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Filter, Search } from 'lucide-react';
 
-interface Transaction {
-    id: number;
-    transaction_code: string;
-    type: 'deposit' | 'withdrawal' | 'same-bank-transfer' | 'local-bank-transfer' | 'international-transfer';
-    amount: number;
-    currency?: string;
-    recipient_account?: string;
-    recipient_name?: string;
-    bank_name?: string;
-    bank_address?: string;
-    swift_code?: string;
-    beneficiary_address?: string;
-    reference?: string;
-    description?: string;
-    client: {
-        client_id: string;
-        account_number: string;
-        user: {
-            name: string;
-        };
-    };
-    status: 'pending' | 'completed' | 'failed' | 'cancelled';
-    created_at: string;
-}
 
 interface TransactionsPageProps {
     transactions: Transaction[];

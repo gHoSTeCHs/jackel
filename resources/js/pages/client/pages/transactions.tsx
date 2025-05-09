@@ -1,44 +1,89 @@
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
+import { Transaction, TransactionType } from '@/types';
 
 const Transactions = () => {
-    // Mock transaction data
-    const mockTransactions = [
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+    const mockTransactions: Transaction[] = [
         {
             id: 1,
-            code: 'TXN001',
-            accountNumber: 'ACC12345',
-            type: 'Deposit',
+            transaction_code: 'TXN001',
+            type: 'deposit' as TransactionType,
             amount: 500.0,
-            owner: 'John Doe',
-            timestamp: '2023-10-27 10:00:00',
+            currency: 'USD',
+            client: {
+                client_id: 'CLT001',
+                account_number: 'ACC12345',
+                user: {
+                    name: 'John Doe',
+                },
+            },
+            status: 'completed',
+            created_at: '2023-10-27 10:00:00',
         },
         {
             id: 2,
-            code: 'TXN002',
-            accountNumber: 'ACC67890',
-            type: 'Withdrawal',
+            transaction_code: 'TXN002',
+            type: 'withdrawal' as TransactionType,
             amount: 150.0,
-            owner: 'Jane Smith',
-            timestamp: '2023-10-27 11:30:00',
+            currency: 'USD',
+            client: {
+                client_id: 'CLT002',
+                account_number: 'ACC67890',
+                user: {
+                    name: 'Jane Smith',
+                },
+            },
+            status: 'completed',
+            created_at: '2023-10-27 11:30:00',
         },
         {
             id: 3,
-            code: 'TXN003',
-            accountNumber: 'ACC12345',
-            type: 'Transfer',
+            transaction_code: 'TXN003',
+            type: 'same-bank-transfer' as TransactionType,
             amount: 200.0,
-            owner: 'John Doe',
-            timestamp: '2023-10-28 09:15:00',
+            currency: 'USD',
+            recipient_account: 'ACC98765',
+            recipient_name: 'Alice Brown',
+            client: {
+                client_id: 'CLT001',
+                account_number: 'ACC12345',
+                user: {
+                    name: 'John Doe',
+                },
+            },
+            status: 'completed',
+            created_at: '2023-10-28 09:15:00',
         },
         {
             id: 4,
-            code: 'TXN004',
-            accountNumber: 'ACC54321',
-            type: 'Deposit',
+            transaction_code: 'TXN004',
+            type: 'international-transfer' as TransactionType,
             amount: 1000.0,
-            owner: 'Alice Brown',
-            timestamp: '2023-10-28 14:00:00',
+            currency: 'USD',
+            recipient_account: 'GB29WIBKE60161331926819',
+            recipient_name: 'Robert Wilson',
+            bank_name: 'Barclays Bank',
+            bank_address: '1 Churchill Place, London E14 5HP, United Kingdom',
+            swift_code: 'BARCA22',
+            beneficiary_address: '15 Oxford Street, London W1D 2HS, United Kingdom',
+            reference: 'INV-2023-001',
+            description: 'International business payment',
+            client: {
+                client_id: 'CLT003',
+                account_number: 'ACC54321',
+                user: {
+                    name: 'Alice Brown',
+                },
+            },
+            status: 'completed',
+            created_at: '2023-10-28 14:00:00',
         },
     ];
 
@@ -65,7 +110,7 @@ const Transactions = () => {
                         <div className="mt-2 w-full sm:mt-0 sm:w-1/2">
                             <ol className="flex justify-end space-x-2 text-sm">
                                 <li className="text-blue-600 hover:text-blue-800">
-                                    <Link href="/client">Dashboard</Link>
+                                    <Link href={route('client.dashboard')}>Dashboard</Link>
                                 </li>
                                 <li className="text-gray-500 before:mx-2 before:content-['/']">Transaction History</li>
                             </ol>
@@ -97,26 +142,47 @@ const Transactions = () => {
                                     {mockTransactions.map((transaction, index) => (
                                         <tr key={transaction.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{index + 1}</td>
-                                            <td className="px-6 py-4 font-mono text-sm whitespace-nowrap text-gray-900">{transaction.code}</td>
                                             <td className="px-6 py-4 font-mono text-sm whitespace-nowrap text-gray-900">
-                                                {transaction.accountNumber}
+                                                {transaction.transaction_code}
+                                            </td>
+                                            <td className="px-6 py-4 font-mono text-sm whitespace-nowrap text-gray-900">
+                                                {transaction.client.account_number}
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap">
-                                                <span
-                                                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                                                        transaction.type === 'Deposit'
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : transaction.type === 'Transfer'
-                                                              ? 'bg-yellow-100 text-yellow-800'
-                                                              : 'bg-red-100 text-red-800'
-                                                    }`}
+                                                <Badge
+                                                    variant={
+                                                        transaction.type === 'deposit'
+                                                            ? 'default'
+                                                            : transaction.type === 'withdrawal'
+                                                              ? 'destructive'
+                                                              : 'secondary'
+                                                    }
                                                 >
-                                                    {transaction.type}
-                                                </span>
+                                                    {transaction.type
+                                                        .split('-')
+                                                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                                                        .join(' ')}
+                                                </Badge>
                                             </td>
-                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">$ {transaction.amount.toFixed(2)}</td>
-                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.owner}</td>
-                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{formatDate(transaction.timestamp)}</td>
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                {transaction.currency} {transaction.amount.toLocaleString()}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{transaction.client.user.name}</td>
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                {formatDate(transaction.created_at)}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setSelectedTransaction(transaction);
+                                                        setIsDetailsOpen(true);
+                                                    }}
+                                                >
+                                                    View Details
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -125,6 +191,11 @@ const Transactions = () => {
                     </div>
                 </div>
             </div>
+
+
+            {selectedTransaction && (
+                <TransactionDetailsDialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} transaction={selectedTransaction} />
+            )}
         </MainLayout>
     );
 };

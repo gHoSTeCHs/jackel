@@ -41,3 +41,31 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export type TransactionType = 'deposit' | 'withdrawal' | 'same-bank-transfer' | 'international-transfer' | 'local-bank-transfer';
+
+export interface Transaction {
+    id: number;
+    transaction_code: string;
+    type: TransactionType;
+    amount: number;
+    currency?: string;
+    recipient_account?: string;
+    recipient_name?: string;
+    bank_name?: string;
+    bank_address?: string;
+    swift_code?: string;
+    beneficiary_address?: string;
+    reference?: string;
+    description?: string;
+    client: {
+        client_id: string;
+        account_number: string;
+        user: {
+            name: string;
+        };
+    };
+    status: 'pending' | 'completed' | 'failed' | 'cancelled';
+    created_at: string;
+}
+
