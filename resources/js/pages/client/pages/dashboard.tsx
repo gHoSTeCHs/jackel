@@ -1,7 +1,7 @@
 import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Transaction } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 type DashboardProps = {
@@ -28,6 +28,7 @@ const Dashboard = ({ transactions, stats, balance }: DashboardProps) => {
     const EmptyState = () => {
         return (
             <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Head title="Client Dashboard" />
                 <div className="mb-4 rounded-full bg-gray-100 p-6">
                     <i className="fas fa-receipt text-4xl text-gray-400"></i>
                 </div>

@@ -73,7 +73,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 {/* Navigation Menu */}
                 <nav className="space-y-1 p-4">
                     <Link
-                        href="/client"
+                        href={route('client.dashboard')}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Link>
 
                     <Link
-                        href="/bank-accounts"
+                        href={route('client.bank-accounts')}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Link>
 
                     <Link
-                        href="/transactions"
+                        href={route('client.transactions')}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Link>
 
                     <Link
-                        href="/transfer-money"
+                        href={route('client.transfer.money')}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

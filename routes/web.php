@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Client\ClientController as UserClientController;
+use App\Http\Controllers\Client\TransactionController as UserTransactionController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -72,9 +73,7 @@ Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
     });
 
     // Transactions
-    Route::get('/transactions', function () {
-        return Inertia::render('client/pages/transactions');
-    })->name('client.transactions');
+    Route::get('/transactions', [UserTransactionController::class, 'index'])->name('client.transactions');
 });
 
 require __DIR__ . '/settings.php';

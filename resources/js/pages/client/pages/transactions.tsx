@@ -1,16 +1,34 @@
+import { Button } from '@/components/ui/button';
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
-import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
-import { Transaction, TransactionType } from '@/types';
 
-const Transactions = () => {
+import { TransactionDetailsDialog } from '@/components/transaction-details-dialog';
+import { Pagination } from '@/components/ui/pagination';
+import { Transaction } from '@/types';
+import { useState } from 'react';
+
+interface TransactionsProps {
+    transactions: {
+        data: Transaction[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        links: Array<{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }>;
+    };
+}
+
+const Transactions = ({ transactions }: TransactionsProps) => {
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-    const mockTransactions: Transaction[] = [
+    const paginatedTransactions = transactions.data;
+
+    /*const mockTransactions: Transaction[] = [
         {
             id: 1,
             transaction_code: 'TXN001',
@@ -85,7 +103,7 @@ const Transactions = () => {
             status: 'completed',
             created_at: '2023-10-28 14:00:00',
         },
-    ];
+    ];*/
 
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = {
@@ -139,7 +157,7 @@ const Transactions = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {mockTransactions.map((transaction, index) => (
+                                    {paginatedTransactions.map((transaction, index) => (
                                         <tr key={transaction.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{index + 1}</td>
                                             <td className="px-6 py-4 font-mono text-sm whitespace-nowrap text-gray-900">
@@ -149,20 +167,22 @@ const Transactions = () => {
                                                 {transaction.client.account_number}
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap">
-                                                <Badge
-                                                    variant={
+                                                <span
+                                                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                                                         transaction.type === 'deposit'
-                                                            ? 'default'
-                                                            : transaction.type === 'withdrawal'
-                                                              ? 'destructive'
-                                                              : 'secondary'
-                                                    }
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : transaction.type.includes('transfer')
+                                                              ? 'bg-yellow-100 text-yellow-800'
+                                                              : transaction.type === 'withdrawal'
+                                                                ? 'bg-red-100 text-red-800'
+                                                                : ''
+                                                    }`}
                                                 >
                                                     {transaction.type
                                                         .split('-')
                                                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                                                         .join(' ')}
-                                                </Badge>
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                                                 {transaction.currency} {transaction.amount.toLocaleString()}
@@ -188,10 +208,12 @@ const Transactions = () => {
                                 </tbody>
                             </table>
                         </div>
+                        <div className="border-t border-gray-200 px-6 py-4">
+                            <Pagination currentPage={transactions.current_page} lastPage={transactions.last_page} links={transactions.links} />
+                        </div>
                     </div>
                 </div>
             </div>
-
 
             {selectedTransaction && (
                 <TransactionDetailsDialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} transaction={selectedTransaction} />
