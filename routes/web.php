@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Client\ClientController as UserClientController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -24,36 +25,56 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
 });
 
-Route::get('/client', function () {
-    return Inertia::render('client/pages/dashboard');
-})->name('client.dashboard');
-Route::get('/client-account', function () {
-    return Inertia::render('client/pages/account');
-});
-Route::get('/client-bank-account', function () {
-    return Inertia::render('client/pages/bank-accounts');
+// Client Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('client/login', function () {
+        return Inertia::render('client/auth/login');
+    })->name('client.login');
+
+    Route::get('client/register', function () {
+        return Inertia::render('client/auth/register');
+    })->name('client.register');
 });
 
-// Transfers
-Route::get('/transfer', function () {
-    return Inertia::render('client/pages/transfer');
-});
-Route::get('/transfer-money', function () {
-    return Inertia::render('client/pages/transfer-money');
-});
-Route::get('/transfer-money/same-bank', function () {
-    return Inertia::render('client/pages/transfer/same-bank-transfer');
-});
-Route::get('/transfer-money/local-bank', function () {
-    return Inertia::render('client/pages/transfer/local-bank-transfer');
-});
-Route::get('/transfer-money/international', function () {
-    return Inertia::render('client/pages/transfer/international-transfer');
-});
+// Protected Client Routes
+Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
+    Route::get('/dashboard', [UserClientController::class, 'index'])->name('client.dashboard');
 
-// Transactions
-Route::get('/transactions', function () {
-    return Inertia::render('client/pages/transactions');
+    Route::get('/account', function () {
+        return Inertia::render('client/pages/account');
+    })->name('client.account');
+
+    Route::get('/bank-accounts', function () {
+        return Inertia::render('client/pages/bank-accounts');
+    })->name('client.bank-accounts');
+
+    // Transfers
+    Route::prefix('transfer')->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('client/pages/transfer');
+        })->name('client.transfer');
+
+        Route::get('/money', function () {
+            return Inertia::render('client/pages/transfer-money');
+        })->name('client.transfer.money');
+
+        Route::get('/same-bank', function () {
+            return Inertia::render('client/pages/transfer/same-bank-transfer');
+        })->name('client.transfer.same-bank');
+
+        Route::get('/local-bank', function () {
+            return Inertia::render('client/pages/transfer/local-bank-transfer');
+        })->name('client.transfer.local-bank');
+
+        Route::get('/international', function () {
+            return Inertia::render('client/pages/transfer/international-transfer');
+        })->name('client.transfer.international');
+    });
+
+    // Transactions
+    Route::get('/transactions', function () {
+        return Inertia::render('client/pages/transactions');
+    })->name('client.transactions');
 });
 
 require __DIR__ . '/settings.php';

@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Random\RandomException;
 
-class Client extends Model
+class Client extends Model implements AuthenticatableContract
 {
-    use HasFactory;
+    use HasFactory, Authenticatable;
 
     protected $fillable = [
         'client_id',
@@ -37,7 +39,7 @@ class Client extends Model
      */
     public static function generateAccountNumber(): string
     {
-        return str_pad((string)random_int(1000000000, 9999999999), 10, '0', STR_PAD_LEFT);
+        return str_pad((string) random_int(1000000000, 9999999999), 10, '0', STR_PAD_LEFT);
     }
 
     public function user(): BelongsTo

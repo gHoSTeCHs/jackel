@@ -1,4 +1,5 @@
 import { MainLayoutProps } from '@/types/layout';
+import { Link } from '@inertiajs/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const MainLayout = ({ children }: MainLayoutProps) => {
@@ -46,32 +47,35 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }, [handleMouseEnter, handleMouseLeave, isMobileView, isSidebarOpen]);
 
     return (
-        <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex h-screen bg-gray-50">
             {/* Sidebar */}
             <aside
                 ref={sidebarRef}
                 className={`${
                     isMobileView ? 'fixed' : 'relative'
-                } inset-y-0 left-0 z-50 bg-gray-800 text-white transition-all duration-300 ease-in-out ${
+                } inset-y-0 left-0 z-50 border-r border-gray-200 bg-white shadow-sm transition-all duration-300 ease-in-out ${
                     isMobileView ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full') : isSidebarOpen || isHovered ? 'w-64' : 'w-16'
                 }`}
             >
-                <div className="flex items-center border-b border-gray-700 p-5">
+                <div className="flex items-center border-b border-gray-200 bg-blue-50 p-5">
                     <div className="flex items-center space-x-3">
-                        <div className="h-8 w-8 rounded-full bg-gray-600" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 font-bold text-white">iB</div>
                         <span
-                            className={`text-lg font-semibold transition-opacity duration-300 ${
+                            className={`text-lg font-semibold text-blue-900 transition-opacity duration-300 ${
                                 isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'
                             }`}
                         >
-                            Bank Name
+                            iBank
                         </span>
                     </div>
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="space-y-2 p-4">
-                    <a href="#" className="flex items-center space-x-3 rounded-lg bg-gray-700 p-3">
+                <nav className="space-y-1 p-4">
+                    <Link
+                        href="/client"
+                        className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                                 strokeLinecap="round"
@@ -83,32 +87,104 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
                             Dashboard
                         </span>
-                    </a>
+                    </Link>
+
+                    <Link
+                        href="/bank-accounts"
+                        className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                            />
+                        </svg>
+                        <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
+                            Bank Accounts
+                        </span>
+                    </Link>
+
+                    <Link
+                        href="/transactions"
+                        className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                            />
+                        </svg>
+                        <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
+                            Transactions
+                        </span>
+                    </Link>
+
+                    <Link
+                        href="/transfer-money"
+                        className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
+                            Transfer Money
+                        </span>
+                    </Link>
+
+                    <Link
+                        href="/account"
+                        className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
+                    >
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                        </svg>
+                        <span className={`transition-opacity duration-300 ${isSidebarOpen || isHovered ? 'opacity-100' : 'hidden opacity-0'}`}>
+                            Account
+                        </span>
+                    </Link>
                 </nav>
             </aside>
 
             <div ref={mainContentRef} className={`flex flex-1 flex-col overflow-hidden ${isMobileView && isSidebarOpen ? 'opacity-50' : ''}`}>
                 {/* Header */}
-                <header className="border-b border-gray-700 bg-white shadow dark:bg-gray-800">
+                <header className="border-b border-gray-200 bg-white shadow-sm">
                     <div className="flex items-center justify-between p-4">
                         <button
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            title="button"
+                            className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            title="Toggle Sidebar"
                         >
                             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
                         <div className="flex items-center space-x-4">
-                            <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-600" />
-                            <span className="text-gray-800 dark:text-white">User Name</span>
+                            <div className="relative">
+                                <button className="flex items-center space-x-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-600">
+                                        JD
+                                    </div>
+                                    <span className="hidden sm:inline-block">John Doe</span>
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </header>
 
                 {/* Main Content Area */}
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 dark:bg-gray-900">{children}</main>
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">{children}</main>
             </div>
         </div>
     );

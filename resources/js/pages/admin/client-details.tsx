@@ -1,13 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Head, useForm } from '@inertiajs/react';
 import { PieChart } from 'react-minimal-pie-chart';
+import * as z from 'zod';
 
 interface Transaction {
     id: number;
@@ -38,91 +40,54 @@ interface ClientDetailsProps {
     client: Client;
 }
 
-type BalanceFormData = {
-    amount: number;
-    operation: 'add' | 'subtract';
-    reason?: string;
-};
-
-const UpdateClientBalance = ({ clientId, currentBalance }: { clientId: number; currentBalance: number }) => {
-    const { data, setData, errors, post } = useForm<BalanceFormData>({
-        amount: 0,
-        operation: 'add',
-        reason: '',
-    });
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        post(route('clients.update-balance', { client: clientId }));
-    };
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Update Balance</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="amount">Amount</Label>
-                        <Input
-                            id="amount"
-                            type="number"
-                            value={data.amount}
-                            onChange={(e) => setData('amount', Number(e.target.value))}
-                            placeholder="Enter amount"
-                        />
-                        {errors.amount && <p className="text-destructive text-sm">{errors.amount}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="operation">Operation</Label>
-                        <Select value={data.operation} onValueChange={(value) => setData('operation', value as 'add' | 'subtract')}>
-                            <SelectTrigger id="operation">
-                                <SelectValue placeholder="Select operation" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="add">Add</SelectItem>
-                                <SelectItem value="subtract">Subtract</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.operation && <p className="text-destructive text-sm">{errors.operation}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="reason">Reason (Optional)</Label>
-                        <Input
-                            id="reason"
-                            value={data.reason}
-                            onChange={(e) => setData('reason', e.target.value)}
-                            placeholder="Reason for balance adjustment"
-                        />
-                        {errors.reason && <p className="text-destructive text-sm">{errors.reason}</p>}
-                    </div>
-                    <div className="text-muted-foreground text-sm">Current Balance: ${currentBalance.toLocaleString()}</div>
-                    <Button type="submit">Update Balance</Button>
-                </form>
-            </CardContent>
-        </Card>
-    );
-};
-
 type TransactionFormData = {
     amount: number;
     type: 'deposit' | 'withdrawal' | 'transfer';
     description: string;
 };
 
+type BalanceFormData = {
+    amount: number;
+    operation: 'add' | 'subtract';
+};
+
+const transactionSchema = z.object({
+    amount: z.number().min(0.01),
+    type: z.enum(['deposit', 'withdrawal', 'transfer']),
+    description: z.string().min(1),
+});
+
+const balanceSchema = z.object({
+    amount: z.number().min(0.01),
+    operation: z.enum(['add', 'subtract']),
+});
+
 export default function ClientDetails({ client }: ClientDetailsProps) {
-    const { data, setData, errors, post } = useForm<TransactionFormData>({
-        amount: 0,
-        type: 'deposit',
-        description: '',
+    const transactionForm = useForm<TransactionFormData>({
+        resolver: zodResolver(transactionSchema),
+        data: {
+            amount: 0,
+            type: 'deposit',
+            description: '',
+        },
     });
 
-    const handleTransactionSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        post(route('transactions.store', { client: client.id }));
-    };
+    const balanceForm = useForm<BalanceFormData>({
+        resolver: zodResolver(balanceSchema),
+        data: {
+            amount: 0,
+            operation: 'add',
+        },
+    });
 
+    const accountTypes = [
+        { id: '1', name: 'Checking Account' },
+        { id: '2', name: 'Business Account' },
+        { id: '3', name: 'Fixed Deposit Account' },
+        { id: '4', name: 'Student Account' },
+    ];
+
+    // Calculate transaction statistics
     const transactionStats = client.transactions.reduce(
         (acc, transaction) => {
             acc[transaction.type] = (acc[transaction.type] || 0) + transaction.amount;
@@ -132,9 +97,9 @@ export default function ClientDetails({ client }: ClientDetailsProps) {
     );
 
     const transactionChartData = [
-        { title: 'Deposits', value: Number(transactionStats.deposit) || 0, color: '#10B981' },
-        { title: 'Withdrawals', value: Number(transactionStats.withdrawal) || 0, color: '#EF4444' },
-        { title: 'Transfers', value: Number(transactionStats.transfer) || 0, color: '#3B82F6' },
+        { title: 'Deposits', value: transactionStats.deposit || 0, color: '#10B981' },
+        { title: 'Withdrawals', value: transactionStats.withdrawal || 0, color: '#EF4444' },
+        { title: 'Transfers', value: transactionStats.transfer || 0, color: '#3B82F6' },
     ];
 
     return (
@@ -176,10 +141,6 @@ export default function ClientDetails({ client }: ClientDetailsProps) {
                                     <p className="text-muted-foreground text-sm font-medium">Status</p>
                                     <Switch checked={client.status} />
                                 </div>
-                                <div>
-                                    <p className="text-muted-foreground text-sm font-medium">Account Type</p>
-                                    <p>{client.account_type.name}</p>
-                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -215,81 +176,142 @@ export default function ClientDetails({ client }: ClientDetailsProps) {
                             <CardTitle>Create Transaction</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={handleTransactionSubmit} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="amount">Amount</Label>
-                                    <Input
-                                        id="amount"
-                                        type="number"
-                                        value={data.amount}
-                                        onChange={(e) => setData('amount', Number(e.target.value))}
-                                        placeholder="Enter amount"
-                                    />
-                                    {errors.amount && <p className="text-destructive text-sm">{errors.amount}</p>}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="type">Type</Label>
-                                    <Select
-                                        value={data.type}
-                                        onValueChange={(value) => setData('type', value as 'deposit' | 'withdrawal' | 'transfer')}
-                                    >
-                                        <SelectTrigger id="type">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="deposit">Deposit</SelectItem>
-                                            <SelectItem value="withdrawal">Withdrawal</SelectItem>
-                                            <SelectItem value="transfer">Transfer</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.type && <p className="text-destructive text-sm">{errors.type}</p>}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="description">Description</Label>
-                                    <Input
-                                        id="description"
-                                        value={data.description}
-                                        onChange={(e) => setData('description', e.target.value)}
-                                        placeholder="Enter description"
-                                    />
-                                    {errors.description && <p className="text-destructive text-sm">{errors.description}</p>}
-                                </div>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    transactionForm.submit('post', '/admin/transactions');
+                                }}
+                                className="space-y-4"
+                            >
+                                <FormField
+                                    name="amount"
+                                    control={transactionForm.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    name="type"
+                                    control={transactionForm.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Type</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select type" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="deposit">Deposit</SelectItem>
+                                                    <SelectItem value="withdrawal">Withdrawal</SelectItem>
+                                                    <SelectItem value="transfer">Transfer</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    name="description"
+                                    control={transactionForm.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                                 <Button type="submit">Create Transaction</Button>
                             </form>
                         </CardContent>
                     </Card>
 
-                    <UpdateClientBalance clientId={client.id} currentBalance={client.balance} />
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Update Balance</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    balanceForm.submit('post', '/admin/balance');
+                                }}
+                                className="space-y-4"
+                            >
+                                <FormField
+                                    name="amount"
+                                    control={balanceForm.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Amount</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    name="operation"
+                                    control={balanceForm.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Operation</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select operation" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="add">Add</SelectItem>
+                                                    <SelectItem value="subtract">Subtract</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit">Update Balance</Button>
+                            </form>
+                        </CardContent>
+                    </Card>
 
                     <Card className="md:col-span-2">
                         <CardHeader>
                             <CardTitle>Transaction History</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {client.transactions.length > 0 ? (
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Type</TableHead>
-                                            <TableHead>Amount</TableHead>
-                                            <TableHead>Description</TableHead>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Type</TableHead>
+                                        <TableHead>Amount</TableHead>
+                                        <TableHead>Description</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {client.transactions.map((transaction) => (
+                                        <TableRow key={transaction.id}>
+                                            <TableCell>{new Date(transaction.created_at).toLocaleDateString()}</TableCell>
+                                            <TableCell className="capitalize">{transaction.type}</TableCell>
+                                            <TableCell>${transaction.amount.toLocaleString()}</TableCell>
+                                            <TableCell>{transaction.description}</TableCell>
                                         </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {client.transactions.map((transaction) => (
-                                            <TableRow key={transaction.id}>
-                                                <TableCell>{new Date(transaction.created_at).toLocaleDateString()}</TableCell>
-                                                <TableCell className="capitalize">{transaction.type}</TableCell>
-                                                <TableCell>${transaction.amount.toLocaleString()}</TableCell>
-                                                <TableCell>{transaction.description}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            ) : (
-                                <p className="text-muted-foreground py-4 text-center">No transactions yet</p>
-                            )}
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </CardContent>
                     </Card>
                 </div>

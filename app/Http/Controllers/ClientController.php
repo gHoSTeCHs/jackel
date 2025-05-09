@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,6 +21,23 @@ class ClientController extends Controller
         ]);
     }
 
+    public function createClient(Request $request)
+    {
+        $attributes = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'user',
+        ]);
+
+    }
+
     public function show(Client $client): Response
     {
         $client->load(['user', 'accountType', 'transactions']);
@@ -24,7 +46,7 @@ class ClientController extends Controller
         ]);
     }
 
-    public function update(Client $client)
+    public function update(Client $client): RedirectResponse
     {
         $validated = request()->validate([
             'status' => 'required|boolean',
@@ -36,7 +58,7 @@ class ClientController extends Controller
         return back()->with('success', 'Client updated successfully');
     }
 
-    public function createTransaction(Client $client)
+    public function createTransaction(Client $client): RedirectResponse
     {
         $validated = request()->validate([
             'amount' => 'required|numeric',
@@ -55,7 +77,7 @@ class ClientController extends Controller
         return back()->with('success', 'Transaction created successfully');
     }
 
-    public function updateBalance(Client $client)
+    public function updateBalance(Client $client): RedirectResponse
     {
         $validated = request()->validate([
             'amount' => 'required|numeric',

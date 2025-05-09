@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class ClientMiddleWare
 {
     /**
      * Handle an incoming request.
@@ -17,13 +17,11 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::user()) {
-            if (Auth::user()->isAdmin()) {
+            if (Auth::user()->isUser()) {
                 return $next($request);
             }
-
-            return redirect(route('client.dashboard'));
         }
 
-        return redirect('/')->with('error', 'You are not authorized to access this page.');
+        return redirect(route('client.login'))->with('error', 'Please log in to access this page.');
     }
 }
