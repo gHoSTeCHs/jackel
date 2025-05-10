@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use App\Models\Client;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -29,6 +30,7 @@ class TransactionFactory extends Factory
         $baseData = [
             'transaction_code' => Transaction::generateTransactionCode(),
             'client_id' => Client::factory(),
+            'account_id' => Account::factory(),
             'type' => $type,
             'amount' => $this->faker->randomFloat(2, 10, 5000),
             'description' => $this->faker->sentence(),
@@ -36,7 +38,6 @@ class TransactionFactory extends Factory
             'currency' => 'USD',
         ];
 
-        // Add transfer-specific data based on type
         if (in_array($type, ['same-bank-transfer', 'local-bank-transfer', 'international-transfer'])) {
             $baseData = array_merge($baseData, [
                 'recipient_account' => $this->faker->numerify('##########'),

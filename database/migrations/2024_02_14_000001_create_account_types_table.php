@@ -19,11 +19,8 @@ return new class extends Migration {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('client_id')->unique();
-            $table->string('account_number', 10)->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('account_type_id')->constrained()->onDelete('restrict');
             $table->boolean('status')->default(true);
-            $table->decimal('balance', 15, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -26,7 +26,7 @@ class Transaction extends Model
 
     protected $fillable = [
         'transaction_code',
-        'client_id',
+        'account_id',
         'type',
         'amount',
         'currency',
@@ -68,9 +68,9 @@ class Transaction extends Model
         ]);
     }
 
-    public function client(): BelongsTo
+    public function account(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Account::class);
     }
 
     public static function generateTransactionCode(): string

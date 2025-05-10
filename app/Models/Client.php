@@ -16,15 +16,11 @@ class Client extends Model implements AuthenticatableContract
 
     protected $fillable = [
         'client_id',
-        'account_number',
         'user_id',
-        'account_type_id',
-        'status',
-        'balance'
+        'status'
     ];
 
     protected $casts = [
-        'balance' => 'decimal:2',
         'status' => 'boolean'
     ];
 
@@ -47,9 +43,9 @@ class Client extends Model implements AuthenticatableContract
         return $this->belongsTo(User::class);
     }
 
-    public function accountType(): BelongsTo
+    public function accounts(): HasMany
     {
-        return $this->belongsTo(AccountType::class);
+        return $this->hasMany(Account::class);
     }
 
     public function transactions(): HasMany

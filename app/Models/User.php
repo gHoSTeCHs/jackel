@@ -63,7 +63,10 @@ class User extends Authenticatable
 
     public function client(): HasOne
     {
-        return $this->hasOne(Client::class);
+        return $this->hasOne(Client::class)->withDefault([
+            'client_id' => Client::generateClientId(),
+            'status' => true
+        ]);
     }
 
     public function isAdmin(): bool

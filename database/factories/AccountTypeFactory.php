@@ -29,7 +29,7 @@ class AccountTypeFactory extends Factory
             ]),
             'description' => $this->faker->sentence(),
             'minimum_balance' => $this->faker->randomFloat(2, 0, 1000),
-            'interest_rate' => $this->faker->randomFloat(2, 0.5, 5.0)
+            'interest_rate' => $this->faker->randomFloat(nbMaxDecimals: 2, min: 0.5, max: 5.0)
         ];
     }
 }
