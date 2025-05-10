@@ -46,9 +46,7 @@ Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
         return Inertia::render('client/pages/account');
     })->name('client.account');
 
-    Route::get('/bank-accounts', function () {
-        return Inertia::render('client/pages/bank-accounts');
-    })->name('client.bank-accounts');
+    Route::get('/bank-accounts', [UserClientController::class, 'getAccounts'])->name('client.bank-accounts');
 
     // Transfers
     Route::prefix('transfer')->group(function () {

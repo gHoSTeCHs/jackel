@@ -46,6 +46,11 @@ class Transaction extends Model
         'status' => 'string'
     ];
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'account_id', 'id')->withDefault();
+    }
+
     public function isTransfer(): bool
     {
         return in_array($this->type, [

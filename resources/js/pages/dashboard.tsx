@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { ArrowDownRight, ArrowUpRight, Users, Wallet } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, CreditCard, Users, Wallet } from 'lucide-react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 const COLORS = ['#4F81BC', '#C0504E', '#9BBB58', '#23BFAA', '#8064A1', '#4AACC5', '#F79647'];
@@ -10,6 +10,7 @@ const COLORS = ['#4F81BC', '#C0504E', '#9BBB58', '#23BFAA', '#8064A1', '#4AACC5'
 interface DashboardProps {
     statistics: {
         totalClients: number;
+        totalAccounts: number;
         totalDeposits: number;
         totalWithdrawals: number;
         totalTransfers: number;
@@ -38,7 +39,7 @@ export default function Dashboard({ statistics, accountTypeData, transactionData
             <Head title="Dashboard" />
             <div className="space-y-4 p-4">
                 {/* Statistics Cards */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
@@ -46,6 +47,15 @@ export default function Dashboard({ statistics, accountTypeData, transactionData
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{statistics?.totalClients}</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Accounts</CardTitle>
+                            <CreditCard className="text-muted-foreground h-4 w-4" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{statistics?.totalAccounts}</div>
                         </CardContent>
                     </Card>
                     <Card>

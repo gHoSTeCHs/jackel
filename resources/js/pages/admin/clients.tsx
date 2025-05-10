@@ -10,19 +10,24 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 
+interface Account {
+    id: number;
+    account_number: string;
+    balance: number;
+    status: boolean;
+    account_type: {
+        name: string;
+    };
+}
+
 interface Client {
     id: number;
-    client_id: string;
-    account_number: string;
     user: {
         name: string;
         email: string;
     };
-    account_type: {
-        name: string;
-    };
-    status: boolean;
-    balance: number;
+    accounts: Account[];
+    total_balance: number;
 }
 
 interface ClientsPageProps {
@@ -72,12 +77,10 @@ export default function Clients({ clients }: ClientsPageProps) {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Client ID</TableHead>
-                                    <TableHead>Account Number</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Account Type</TableHead>
-                                    <TableHead>Balance</TableHead>
+                                    <TableHead>Accounts</TableHead>
+                                    <TableHead>Total Balance</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Actions</TableHead>
                                 </TableRow>
@@ -85,16 +88,29 @@ export default function Clients({ clients }: ClientsPageProps) {
                             <TableBody>
                                 {clients?.map((client) => (
                                     <TableRow key={client.id}>
-                                        <TableCell>{client.client_id}</TableCell>
-                                        <TableCell>{client.account_number}</TableCell>
                                         <TableCell>{client.user.name}</TableCell>
                                         <TableCell>{client.user.email}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">{client.account_type.name}</Badge>
+                                            {client.accounts.map((account) => (
+                                                <div key={account.id} className="mb-1 last:mb-0">
+                                                    <Badge variant="outline" className="mr-2">
+                                                        {account.account_type.name}
+                                                    </Badge>
+                                                    <span className="text-muted-foreground text-sm">{account.account_number}</span>
+                                                </div>
+                                            ))}
                                         </TableCell>
-                                        <TableCell>${client.balance.toLocaleString()}</TableCell>
+                                        <TableCell>${client.total_balance.toLocaleString()}</TableCell>
                                         <TableCell>
-                                            <Switch checked={client.status} onCheckedChange={() => {}} aria-label="Toggle account status" />
+                                            {client.accounts.map((account) => (
+                                                <div key={account.id} className="mb-1 last:mb-0">
+                                                    <Switch
+                                                        checked={account.status}
+                                                        onCheckedChange={() => {}}
+                                                        aria-label={`Toggle account status for ${account.account_number}`}
+                                                    />
+                                                </div>
+                                            ))}
                                         </TableCell>
                                         <TableCell>
                                             <Button

@@ -1,37 +1,20 @@
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
 
-const BankAccounts = () => {
-    const mockAccounts = [
-        {
-            id: 1,
-            name: 'Savings Account',
-            accountNumber: 'ACC123456789',
-            rate: '1.5%',
-            type: 'Savings',
-            owner: 'John Doe',
-            dateOpened: '2023-01-15',
-        },
-        {
-            id: 2,
-            name: 'Checking Account',
-            accountNumber: 'ACC987654321',
-            rate: '0.5%',
-            type: 'Checking',
-            owner: 'John Doe',
-            dateOpened: '2022-11-20',
-        },
-        {
-            id: 3,
-            name: 'Investment Account',
-            accountNumber: 'ACC555555555',
-            rate: 'Variable',
-            type: 'Investment',
-            owner: 'John Doe',
-            dateOpened: '2024-03-10',
-        },
-    ];
+interface BankAccountsProps {
+    accounts: Array<{
+        id: number;
+        name: string;
+        accountNumber: string;
+        rate: string;
+        type: string;
+        owner: string;
+        dateOpened: string;
+        balance: number;
+    }>;
+}
 
+const BankAccounts = ({ accounts }: BankAccountsProps) => {
     return (
         <MainLayout>
             <div className="p-4">
@@ -43,7 +26,7 @@ const BankAccounts = () => {
                         <div className="mt-2 w-full sm:mt-0 sm:w-1/2">
                             <ol className="flex justify-end space-x-2 text-sm">
                                 <li className="text-blue-600 hover:text-blue-800">
-                                    <Link href="/client">Dashboard</Link>
+                                    <Link href={route('client.dashboard')}>Dashboard</Link>
                                 </li>
                                 <li className="text-gray-500 before:mx-2 before:content-['/']">
                                     <Link href="#" className="text-blue-600 hover:text-blue-800">
@@ -74,10 +57,11 @@ const BankAccounts = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                             Date Opened
                                         </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {mockAccounts.map((account, index) => (
+                                    {accounts.map((account, index) => (
                                         <tr key={account.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{index + 1}</td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{account.name}</td>
@@ -98,6 +82,7 @@ const BankAccounts = () => {
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{account.owner}</td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">{account.dateOpened}</td>
+                                            <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">${account.balance.toLocaleString()}</td>
                                         </tr>
                                     ))}
                                 </tbody>
