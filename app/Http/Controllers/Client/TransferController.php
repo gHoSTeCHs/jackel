@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Client;
 use App\Models\Transaction;
 use Exception;
@@ -53,30 +54,32 @@ class TransferController extends Controller
         return $request->validate($rules);
     }
 
-    private function checkSufficientBalance(Client $client, float $amount): bool
+    private function checkSufficientBalance(Account $account, float $amount): bool
     {
-        return $client->balance >= $amount;
+        return $account->balance >= $amount;
     }
 
     private function processTransfer(array $data, string $transferType): JsonResponse
     {
-        $client = Auth::user()->client;
+        $sourceAccount = Account::where('account_number', $data['fromAccount'])
+            ->where('client_id', Auth::user()->client->id)
+            ->firstOrFail();
 
-        if (!$this->checkSufficientBalance($client, $data['amount'])) {
+        if (!$this->checkSufficientBalance($sourceAccount, $data['amount'])) {
             return response()->json(['message' => 'Insufficient balance'], 422);
         }
 
         try {
             DB::beginTransaction();
 
-
-            $transaction = new Transaction([
+            // Create sender's transaction
+            $senderTransaction = new Transaction([
                 'transaction_code' => 'TRX' . Str::random(10),
                 'type' => $transferType,
                 'amount' => $data['amount'],
                 'currency' => $data['currency'] ?? 'USD',
                 'status' => 'completed',
-                'client_id' => $client->id,
+                'account_id' => $sourceAccount->id,
                 'recipient_account' => $data['accountNumber'],
                 'recipient_name' => $data['accountName'],
                 'bank_name' => $data['bankName'] ?? null,
@@ -87,17 +90,44 @@ class TransferController extends Controller
                 'description' => $data['description'],
             ]);
 
-            $transaction->save();
+            $senderTransaction->save();
 
-            // Update client balance
-            $client->balance -= $data['amount'];
-            $client->save();
+            // Update sender's account balance
+            $sourceAccount->balance -= $data['amount'];
+            $sourceAccount->save();
+
+            // For same-bank transfers, create recipient's transaction and update their balance
+            if ($transferType === 'same-bank-transfer') {
+                $recipientAccount = Account::where('account_number', $data['accountNumber'])->first();
+
+                if ($recipientAccount) {
+                    // Create recipient's transaction
+                    $recipientTransaction = new Transaction([
+                        'transaction_code' => 'TRX' . Str::random(10),
+                        'type' => 'received-transfer',
+                        'amount' => $data['amount'],
+                        'currency' => $data['currency'] ?? 'USD',
+                        'status' => 'completed',
+                        'account_id' => $recipientAccount->id,
+                        'recipient_account' => $data['fromAccount'],
+                        'recipient_name' => Auth::user()->name,
+                        'reference' => $data['reference'],
+                        'description' => $data['description'],
+                    ]);
+
+                    $recipientTransaction->save();
+
+                    // Update recipient's balance
+                    $recipientAccount->balance += $data['amount'];
+                    $recipientAccount->save();
+                }
+            }
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Transfer completed successfully',
-                'transaction' => $transaction,
+                'transaction' => $senderTransaction,
             ]);
         } catch (Exception $e) {
             DB::rollBack();

@@ -90,7 +90,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Link>
 
                     <Link
-                        href={route('client.bank-accounts')}
+                        href={route('client.accounts.bank-accounts')}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </Link>
 
                     <Link
-                        href="/account"
+                        href={'/account'}
                         className="flex items-center space-x-3 rounded-lg p-3 text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                     >
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </header>
 
                 {/* Main Content Area */}
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">{children}</main>
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">{children}</main>
             </div>
         </div>
     );

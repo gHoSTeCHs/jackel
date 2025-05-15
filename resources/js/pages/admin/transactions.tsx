@@ -5,21 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { Transaction, type BreadcrumbItem } from '@/types';
+import { Account, Transaction, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Filter, Search } from 'lucide-react';
 
-
 interface TransactionsPageProps {
     transactions: Transaction[];
-    clients: {
-        id: string;
-        client_id: string;
-        user: {
-            name: string;
-        };
-        account_number: string;
-    }[];
+    accounts: Account[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -63,14 +55,14 @@ const getTransactionTypeLabel = (type: Transaction['type']): string => {
     }
 };
 
-export default function Transactions({ transactions, clients }: TransactionsPageProps) {
+export default function Transactions({ transactions, accounts }: TransactionsPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions Management" />
             <div className="space-y-4 p-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-3xl font-bold tracking-tight">Transactions</h2>
-                    <CreateTransactionDialog clients={clients} />
+                    <CreateTransactionDialog accounts={accounts} />
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -106,8 +98,8 @@ export default function Transactions({ transactions, clients }: TransactionsPage
                                 {transactions?.map((transaction) => (
                                     <TableRow key={transaction.id}>
                                         <TableCell className="font-medium">{transaction.transaction_code}</TableCell>
-                                        <TableCell>{transaction.client.user.name}</TableCell>
-                                        <TableCell>{transaction.client.account_number}</TableCell>
+                                        <TableCell>{transaction.account?.client?.user?.name || 'N/A'}</TableCell>
+                                        <TableCell>{transaction.account?.account_number || 'N/A'}</TableCell>
                                         <TableCell>
                                             <Badge variant={getTransactionBadgeVariant(transaction.type)}>
                                                 {getTransactionTypeLabel(transaction.type)}

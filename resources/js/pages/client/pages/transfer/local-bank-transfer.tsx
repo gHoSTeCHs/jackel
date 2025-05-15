@@ -1,7 +1,7 @@
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Landmark } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { FormInput, FormSelect, StepIndicator, TransferSummary } from './components';
 
@@ -29,10 +29,22 @@ export const LocalBankTransfer = () => {
         description: '',
     });
 
-    const [accounts] = useState([
-        { value: '1234567890', label: 'Checking Account - 1234567890 ($3,245.70)' },
-        { value: '9876543210', label: 'Savings Account - 9876543210 ($12,500.00)' },
-    ]);
+    const [accounts, setAccounts] = useState([]);
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            try {
+                const response = await fetch(route('client.accounts.user'));
+                const data = await response.json();
+                setAccounts(data.accounts);
+            } catch (error) {
+                console.error('Error fetching accounts:', error);
+                toast.error('Failed to load accounts');
+            }
+        };
+
+        fetchAccounts();
+    }, []);
 
     const steps = ['Account Details', 'Confirm Transfer', 'Transfer Complete'];
 

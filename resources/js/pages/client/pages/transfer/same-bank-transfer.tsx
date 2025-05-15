@@ -1,13 +1,15 @@
 import MainLayout from '@/pages/client/layouts/main-layout';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, Building, CheckCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { FormInput, FormSelect, StepIndicator, TransferSummary } from './components';
+import { AccountSearch } from './components/AccountSearch';
 
 interface SameBankFormData {
     fromAccount: string;
     toAccount: string;
+    accountName: string;
     amount: string;
     reference: string;
     description: string;
@@ -18,17 +20,29 @@ const SameBankTransfer = () => {
     const [formData, setFormData] = useState<SameBankFormData>({
         fromAccount: '',
         toAccount: '',
+        accountName: '',
         amount: '',
         reference: '',
         description: '',
     });
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [accounts, setAccounts] = useState([]);
 
-    const [accounts] = useState([
-        { value: '1234567890', label: 'Checking Account - 1234567890 ($3,245.70)' },
-        { value: '9876543210', label: 'Savings Account - 9876543210 ($12,500.00)' },
-    ]);
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            try {
+                const response = await fetch(route('client.accounts.user'));
+                const data = await response.json();
+                setAccounts(data.accounts);
+            } catch (error) {
+                console.error('Error fetching accounts:', error);
+                toast.error('Failed to load accounts');
+            }
+        };
+
+        fetchAccounts();
+    }, []);
 
     const steps = ['Account Details', 'Confirm Transfer', 'Transfer Complete'];
 
@@ -62,12 +76,15 @@ const SameBankTransfer = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                toast(data.message || 'Transfer failed');
+                toast.error(data.message || 'Transfer failed');
+                return;
             }
 
+            toast.success(data.message || 'Transfer completed successfully');
             setCurrentStep(currentStep + 1);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
+            toast.error('Transfer failed. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -126,11 +143,13 @@ const SameBankTransfer = () => {
                                         />
                                     </div>
                                     <div className="md:col-span-2">
-                                        <FormSelect
+                                        <AccountSearch
                                             label="To Account"
-                                            options={accounts.filter((account) => account.value !== formData.fromAccount)}
                                             value={formData.toAccount}
-                                            onChange={(e) => handleChange('toAccount', e.target.value)}
+                                            onChange={(value, displayText) => {
+                                                handleChange('toAccount', value);
+                                                handleChange('accountName', displayText?.split(' - ')[1] || '');
+                                            }}
                                             required={true}
                                         />
                                     </div>
@@ -159,7 +178,7 @@ const SameBankTransfer = () => {
                                             <textarea
                                                 value={formData.description}
                                                 onChange={(e) => handleChange('description', e.target.value)}
-                                                className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                                className="block w-full text-gray-900 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                                                 rows={3}
                                                 placeholder="Additional details about this transfer"
                                             ></textarea>
@@ -191,7 +210,7 @@ const SameBankTransfer = () => {
                                 <TransferSummary
                                     data={[
                                         { label: 'From Account', value: formData.fromAccount },
-                                        { label: 'To Account', value: formData.toAccount },
+                                        { label: 'To Account', value: `${formData.toAccount} - ${formData.accountName}` },
                                         { label: 'Amount', value: `$${formData.amount}` },
                                         { label: 'Reference', value: formData.reference || 'N/A' },
                                         { label: 'Description', value: formData.description || 'N/A' },

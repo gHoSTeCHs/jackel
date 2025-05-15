@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Client\AccountController;
 use App\Http\Controllers\Client\ClientController as UserClientController;
 use App\Http\Controllers\Client\TransactionController as UserTransactionController;
 use App\Http\Controllers\Client\TransferController as UserTransferController;
@@ -25,6 +26,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     });
 
     Route::get('admin/transactions', [TransactionController::class, 'index'])->name('admin.transactions.index');
+    Route::post('admin/transactions', [TransactionController::class, 'store'])->name('admin.transactions.store');
+
 });
 
 // Client Authentication Routes
@@ -46,7 +49,10 @@ Route::middleware(['client', 'verified'])->prefix('client')->group(function () {
         return Inertia::render('client/pages/account');
     })->name('client.account');
 
-    Route::get('/bank-accounts', [UserClientController::class, 'getAccounts'])->name('client.bank-accounts');
+    Route::get('/accounts/search', [AccountController::class, 'search'])->name('client.accounts.search');
+    Route::get('/accounts/user', [AccountController::class, 'getUserAccounts'])->name('client.accounts.user');
+
+    Route::get('/bank-accounts',[AccountController::class, 'getBankAccounts'])->name('client.accounts.bank-accounts');
 
     // Transfers
     Route::prefix('transfer')->group(function () {

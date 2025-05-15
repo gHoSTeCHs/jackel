@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Account } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
@@ -34,20 +35,11 @@ const transferTypeLabels = {
     'international-transfer': 'International Wire Transfer',
 };
 
-interface Client {
-    id: string;
-    client_id: string;
-    user: {
-        name: string;
-    };
-    account_number: string;
-}
-
 interface CreateTransactionDialogProps {
-    clients: Client[];
+    accounts: Account[];
 }
 
-export function CreateTransactionDialog({ clients }: CreateTransactionDialogProps) {
+export function CreateTransactionDialog({ accounts }: CreateTransactionDialogProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -100,13 +92,13 @@ export function CreateTransactionDialog({ clients }: CreateTransactionDialogProp
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select client" />
+                                                <SelectValue placeholder="Select an account" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {clients.map((client) => (
-                                                <SelectItem key={client.id} value={client.id}>
-                                                    {client.user.name} ({client.account_number})
+                                            {accounts.map((account) => (
+                                                <SelectItem key={account.id} value={account.id}>
+                                                    {account.client.user.name} - {account.account_number}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -295,54 +287,6 @@ export function CreateTransactionDialog({ clients }: CreateTransactionDialogProp
                             </>
                         )}
 
-                        <FormField
-                            control={form.control}
-                            name="type"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Transaction Type</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select type" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="deposit">Deposit</SelectItem>
-                                            <SelectItem value="withdrawal">Withdrawal</SelectItem>
-                                            <SelectItem value="transfer">Transfer</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {watchTransactionType === 'transfer' && (
-                            <FormField
-                                control={form.control}
-                                name="recipient_id"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Recipient</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select recipient" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {clients.map((client) => (
-                                                    <SelectItem key={client.id} value={client.id}>
-                                                        {client.user.name} ({client.account_number})
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
                         <FormField
                             control={form.control}
                             name="amount"

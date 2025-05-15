@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, Building, CheckCircle, CreditCard, DollarSign, Globe2, User } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { toast } from 'react-toastify';
 import MainLayout from '../../layouts/main-layout';
@@ -38,10 +38,22 @@ export const InternationalTransfer = () => {
         description: '',
     });
 
-    const [accounts] = useState([
-        { value: '1234567890', label: 'Checking Account - 1234567890 ($3,245.70)' },
-        { value: '9876543210', label: 'Savings Account - 9876543210 ($12,500.00)' },
-    ]);
+    const [accounts, setAccounts] = useState([]);
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            try {
+                const response = await fetch(route('client.accounts.user'));
+                const data = await response.json();
+                setAccounts(data.accounts);
+            } catch (error) {
+                console.error('Error fetching accounts:', error);
+                toast.error('Failed to load accounts');
+            }
+        };
+
+        fetchAccounts();
+    }, []);
 
     const currencies = [
         { value: 'USD', label: 'USD - US Dollar' },
